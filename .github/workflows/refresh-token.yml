@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install jq
-      - run: sudo apt install jq
+        run: sudo apt install jq
       - name: Run pipeline
         run: curl 'https://developers.google.com/oauthplayground/refreshAccessToken' -X POST --data-raw "{\"token_uri\":\"https://oauth2.googleapis.com/token\",\"client_id\":\"517222506229-vsmmajv00ul0bs7p89v5m89qs8eb9359.apps.googleusercontent.com\",\"client_secret\":\"$CLIENT_SECRET\",\"refresh_token\":\"$REFRESH_TOKEN\"}" | jq -r .access_token > token
         env:
