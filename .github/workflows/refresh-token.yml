@@ -1,0 +1,30 @@
+name: refresh-token
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  push:
+    branches:
+      - main
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install jq
+      - run: sudo apt install jq
+      - name: Run pipeline
+        run: curl 'https://developers.google.com/oauthplayground/refreshAccessToken' -X POST --data-raw "{\"token_uri\":\"https://oauth2.googleapis.com/token\",\"client_id\":\"517222506229-vsmmajv00ul0bs7p89v5m89qs8eb9359.apps.googleusercontent.com\",\"client_secret\":\"$CLIENT_SECRET\",\"refresh_token\":\"$REFRESH_TOKEN\"}" | jq -r .access_token > token
+        env:
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+      - name: Commit log
+        run: |
+          git config --global user.name 'Global Witness build script'
+          git config --global user.email 'data@globalwitness.org'
+          git add token
+          timestamp=$(date -u)
+          git commit -m "New Google Earth Engine access token: ${timestamp}" || exit 0
+          git push
