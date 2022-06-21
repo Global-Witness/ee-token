@@ -26,5 +26,6 @@ jobs:
           git config --global user.email 'data@globalwitness.org'
           git add token
           timestamp=$(date -u)
+          git pull
           git commit -m "New Google Earth Engine access token: ${timestamp}" || exit 0
           git push
